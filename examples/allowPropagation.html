@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Example: Allow Propagation</title>
+    <script src="../src/antycs.js"></script>
+    <script src="../src/dom/native.js"></script>
+    <script src="../src/plugins/default.js"></script>
+    <script>
+      window.onload = function() {
+        antycs
+          .watch('click', 'a', function(event) {
+            if (antycs.dom.matches(event.target, '.special')) {
+              console.log('saw a special link click, allowing antycs event to propagate');
+              antycs.event.allowPropagation(event);
+            } else {
+              console.log('saw a link click');
+            }
+          })
+          .watch('click', '*', function(event) {
+            console.log('saw a click on ' + event.target.nodeName);
+          });
+
+        antycs.plugins._default.delay = function(fn) {
+          console.log('stopped a delayed function:', fn);
+        };
+        antycs.dom.on('click', 'a', function(event) {
+          console.log('captured click event');
+          event.preventDefault();
+        });
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Example: Allow Propagation</h1>
+    <p>Open the console and click the links to see what was watched.</p>
+    <p><a class="special" href="http://brandonaaron.net/">Special Link</a></p>
+    <p><a href="http://brandonaaron.net/">Link</a></p>
+  </body>
+</html>
