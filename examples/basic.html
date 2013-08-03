@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Example: Basic</title>
+    <script src="../src/antycs.js"></script>
+    <script src="../src/dom/native.js"></script>
+    <script src="../src/plugins/default.js"></script>
+    <script>
+      window.onload = function() {
+        antycs
+          .watch('submit', 'form', function(event) {
+            console.log('saw a form submit');
+          })
+          .watch('click', 'a', function(event) {
+            console.log('saw a link click');
+          });
+
+        antycs.plugins._default.delay = function(fn) {
+          console.log('stopped a delayed function:', fn);
+        };
+        antycs.dom.on('click', 'a', function(event) {
+          console.log('captured click event');
+          event.preventDefault();
+        });
+        antycs.dom.on('submit', 'form', function(event) {
+          console.log('captured submit event');
+          event.preventDefault();
+        });
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Example: Basic</h1>
+    <p>Open the console and click the links and submit the form to see what was watched.</p>
+    <p><a href="http://brandonaaron.net/">Link</a></p>
+    <p><a href="http://brandonaaron.net/" target="_blank">Link with target _blank</a></p>
+    <form>
+      <fieldset>
+        <legend>A Form</legend>
+        <label>input</label>
+        <input type="text">
+      </fieldset>
+      <input type="submit">
+    </form>
+  </body>
+</html>
