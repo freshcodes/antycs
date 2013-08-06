@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="antycs-category" content="Test">
+    <title>Example: Twitter</title>
+    <script src="../src/antycs.js"></script>
+    <script src="../src/dom/native.js"></script>
+    <script src="../src/plugins/twitter.js"></script>
+    <script>
+      window.onload = function() {
+        antycs
+          .watch('twitter', '.capture', function(event) {
+            console.log('twitter', event.type, event);
+          })
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Example: Twitter</h1>
+    <div>
+      <p>Open the console and click the links to see what was watched. You'll have to actually follow-through with the actions to see the events get fired in the console.</p>
+      <p><a href="https://twitter.com/share" class="capture twitter-share-button" data-via="brandonaaron">Tweet</a></p>
+      <p><a href="https://twitter.com/brandonaaron" class="capture twitter-follow-button" data-show-count="false">Follow @brandonaaron</a></p>
+    </div>
+  </body>
+</html>
