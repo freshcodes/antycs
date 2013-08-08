@@ -32,7 +32,7 @@
         return event.__stopAntycsPropagation === true;
       },
       allowPropagation: function(event) {
-        return event.__stopAntycsPropagation = false;
+        return (event.__stopAntycsPropagation = false);
       }
     }
   };
