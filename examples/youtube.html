@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="antycs-category" content="Test">
+    <title>Example: Youtube</title>
+    <script src="../src/antycs.js"></script>
+    <script src="../src/dom/native.js"></script>
+    <script src="../src/plugins/youtube.js"></script>
+    <script>
+      window.onload = function() {
+        antycs
+          .watch('youtube', 'exampleplayer', function(event) {
+            console.log('youtube', event);
+          })
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Example: Youtube</h1>
+    <div>
+      <p>Open the console and click the links to see what was watched. You'll have to actually follow-through with the actions to see the events get fired in the console.</p>
+      <iframe id="exampleplayer" type="text/html" width="640" height="360" src="http://www.youtube.com/embed/I6OXjnBIW-4?enablejsapi=1" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </body>
+</html>
