@@ -67,9 +67,13 @@ This is used to control event propagation for antycs based events. Sets a proper
 
 ### Default
 
+The `target` argument to `antycs.watch` is not required. If you do not pass a target then you'll get all the watched events that bubble up to the document. If you do pass a `target` then it should be in the form of a CSS selector.
+
 The default plugin allows for tracking of DOM related events. It adds a slight delay to some link clicks and form submits by default.
 
 ### Twitter
+
+The `target` argument to `antycs.watch` is not required. If you do not pass a target then you'll get all the watched events from the entire site. If you do pass a `target` then it should be in the form of a CSS selector.
 
 If you are using some twitter buttons on your site then you can listen for some events that are exposed by Twitter. Here is a list of what this plugin supports listening to:
 
@@ -89,7 +93,31 @@ In the works...
 
 ### YouTube
 
-In the works...
+The `target` argument to `antycs.watch` is required and must be a string that is the id of the player you are wanting to watch. So if you had the following player:
+
+```html
+<iframe id="exampleplayer" type="text/html" width="640" height="360" src="http://www.youtube.com/embed/I6OXjnBIW-4?enablejsapi=1"...
+```
+
+
+Then you could watch the events from this play by using the follow snippet.
+
+```js
+antycs.watch('youtube.play', 'exampleplayer', function(event) { ... });
+```
+
+If you are embedding videos via the iframe method from YouTube then you can listen for these events.
+
+ * `play`
+ * `pause`
+ * `end`
+ * `buffer`
+ * `cue`
+ * `qualitychange`
+ * `ratechange`
+ * `error`
+
+To watch for these events simply prefix them with `youtube.` such as: `antycs.watch('youtube.play', ...)`. You can always watch for all the events by only watching for `youtube` such as: `antycs.watch('youtube', ...)`.
 
 
 ## License
