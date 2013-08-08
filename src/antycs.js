@@ -7,7 +7,7 @@
       return (root.antycs = factory(root));
     });
   } else if (typeof exports === 'object') {
-    module.exports = factory(root);
+    module.exports = root.antycs = factory(root);
   } else {
     root.antycs = factory(root);
   }
