@@ -33,14 +33,16 @@
       twttr.ready(function() {
         var name, events = ['click', 'tweet', 'retweet', 'follow', 'unfollow', 'favorite'];
         while ((name = events.shift())) {
-          twttr.events.bind(name, function(event) {
-            if (event && !antycs.event.isPropagationStopped(event)) {
-              antycs.plugins.twitter.handle(event);
-            }
-          });
+          twttr.events.bind(name, antycs.plugins.twitter.handler);
         }
       });
       plugin._setup = true;
+    },
+
+    handler: function(event) {
+      if (event && !antycs.event.isPropagationStopped(event)) {
+        antycs.plugins.twitter.handle(event);
+      }
     },
 
     handle: function(event) {
