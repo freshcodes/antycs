@@ -44,7 +44,7 @@
     },
 
     handle: function(event) {
-      for (var i=0,watcher; watcher=plugin.watchers[i++];) {
+      for (var i=0,watcher; (watcher=plugin.watchers[i++]);) {
         if (!plugin.matchesEventType(event, watcher.type)) { continue; }
         if (!watcher.target || (watcher.target && antycs.dom.matches(event.target, watcher.target))) {
           plugin.triggerWatcher(watcher, event);
@@ -66,7 +66,7 @@
         var t, js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) return; js=d.createElement(s); js.id=id;
         js.src="https://platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs);
-        return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f) } });
+        return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f); } });
       }(document, "script", "twitter-wjs"));
     }
   };
