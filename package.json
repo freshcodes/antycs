@@ -1,6 +1,6 @@
 {
   "name": "antycs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Organize and simplify your analytics event trapping related code.",
   "main": "./src/antycs.js",
   "repository": {

@@ -48,27 +48,59 @@
 
 }));
 
+/*! Copyright (c) 2013 Fresh Codes LLC
+ * Licensed under the MIT License (LICENSE.txt).
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery', 'antycs'], function(jQuery, antycs) {
-      return factory(root, jQuery, antycs);
+    define(['antycs'], function(antycs) {
+      return factory(root, antycs);
     });
   } else if (typeof exports === 'object') {
-    module.exports = function(antycs, jQuery) {
-      return factory(root, jQuery, antycs);
+    module.exports = function(antycs) {
+      return factory(root, antycs);
     };
   } else {
-    factory(root, jQuery, antycs);
+    factory(root, antycs);
   }
-}(this, function(root, jQuery, antycs) {
+}(this, function(root, antycs) {
 
-  antycs.dom.matches = function matches(el, sel) {
-    return jQuery(el).is(sel);
-  };
+  antycs.dom.matches = (function() {
+    var matcher,
+        el = document.createElement('i'),
+        matchers = [
+          'matches',
+          'matchesSelector',
+          'webkitMatchesSelector',
+          'mozMatchesSelector',
+          'msMatchesSelector',
+          'oMatchesSelector'
+        ];
 
-  antycs.dom.on = function on(type, target, handler) {
-    return jQuery(document).on(type, target, handler);
-  };
+    while((matcher = matchers.shift()) && !(matcher in el));
+
+    if (matcher) {
+      return function matches(el, sel) {
+        return (matcher in el) && el[matcher](sel);
+      };
+    } else {
+      return antycs.error('No compatible matches selector api');
+    }
+  })();
+
+  antycs.dom.on = (function() {
+    if ('addEventListener' in document) {
+      return function on(type, target, handler) {
+        document.addEventListener(type, function(event) {
+          if (antycs.dom.matches(event.target, target)) {
+            handler(event);
+          }
+        }, false);
+      };
+    } else {
+      antycs.error('No compatible event listener api');
+    }
+  })();
 
   return antycs.dom;
 
@@ -135,10 +167,112 @@
 
 }));
 
-// facebook events:
-//  edge.create: facebook.like,
-//  edge.remove: facebook.unlike
-//  message.send: facebook.send
+/*! Copyright (c) 2013 Fresh Codes LLC
+ * Licensed under the MIT License (LICENSE.txt).
+ */
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['antycs'], function(antycs) {
+      return factory(root, antycs);
+    });
+  } else if (typeof exports === 'object') {
+    module.exports = function(antycs) {
+      return factory(root, antycs);
+    };
+  } else {
+    factory(root, antycs);
+  }
+}(this, function(root, antycs) {
+
+  var plugin = {
+    watchers: [],
+
+    watch: function(type, target, fn) {
+      plugin.watchers.push({
+        type: type,
+        target: target,
+        fn: fn
+      });
+    },
+
+    init: function(settings) {
+      if (!('FB' in window)) { plugin.load(settings); }
+      var fn = root.fbAsyncInit;
+      root.fbAsyncInit = function() {
+        if (fn) { fn(); }
+        if (settings) { FB.init(settings); }
+        plugin.setup();
+      };
+    },
+
+    setup: function() {
+      var name, events = ['edge.create', 'edge.remove', 'message.send'];
+      while ((name = events.shift())) {
+        FB.Event.subscribe(name, plugin.handlers[name]);
+      }
+    },
+
+    handlers: {
+      'edge.create': function(url) {
+        plugin.handle({ type: 'like', target: url });
+      },
+
+      'edge.remove': function(url) {
+        plugin.handle({ type: 'unlike', target: url });
+      },
+
+      'message.send': function(url) {
+        plugin.handle({ type: 'send', target: url });
+      }
+    },
+
+    handler: function(event) {
+      if (event && !antycs.event.isPropagationStopped(event)) {
+        plugin.handle(event);
+      }
+    },
+
+    handle: function(event) {
+      for (var i=0,watcher; (watcher=plugin.watchers[i++]);) {
+        if (!plugin.matchesEventType(event, watcher.type)) { continue; }
+        if (plugin.matchesEventTarget(event, watcher.target)) {
+          plugin.triggerWatcher(watcher, event);
+        }
+      }
+    },
+
+    matchesEventType: function(event, type) {
+      return event && (type === 'facebook' || type === 'facebook.' + event.type);
+    },
+
+    matchesEventTarget: function(event, target) {
+      return (!target || (event.target === target));
+    },
+
+    triggerWatcher: function(watcher, event) {
+      antycs.event.stopPropagation(event);
+      watcher.fn(event);
+    },
+
+    load: function() {
+      var el = document.createElement('div');
+      el.setAttribute('id', 'fb-root');
+      document.body.appendChild(el);
+      (function(d) {
+        var js, id, ref;
+        id = "facebook-jssdk";
+        ref = d.getElementsByTagName("script")[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement("script"); js.id = id; js.async = true;
+        js.src = "//connect.facebook.net/en_US/all.js";
+        ref.parentNode.insertBefore(js, ref);
+      }(document));
+    }
+  };
+
+  return (antycs.plugins.facebook = plugin);
+
+}));
 
 /*! Copyright (c) 2013 Fresh Codes LLC
  * Licensed under the MIT License (LICENSE.txt).
@@ -325,7 +459,7 @@
     handle: function(event) {
       for (var i=0,watcher; (watcher=plugin.watchers[i++]);) {
         if (!plugin.matchesEventType(event, watcher.type)) { continue; }
-        if ((watcher.target && event.target && event.target.a) && watcher.target === event.target.a.id) {
+        if (plugin.matchesEventTarget(event, watcher.target)) {
           plugin.triggerWatcher(watcher, event);
         }
       }
@@ -333,6 +467,10 @@
 
     matchesEventType: function(event, type) {
       return event && (type === 'youtube' || type === 'youtube.' + event.type);
+    },
+
+    matchesEventTarget: function(event, target) {
+      return (target && event.target && event.target.a) && target === event.target.a.id;
     },
 
     triggerWatcher: function(watcher, event) {
