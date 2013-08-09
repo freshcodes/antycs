@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="antycs-category" content="Test">
+    <title>Example: Facebook</title>
+    <script src="../src/antycs.js"></script>
+    <script src="../src/dom/native.js"></script>
+    <script src="../src/plugins/facebook.js"></script>
+    <script>
+      window.onload = function() {
+        // can use antycs to initialize the facebook sdk
+        // it will load the sdk and call FB.init for you
+        // and then setup the event handlers so antycs
+        // can watch for events.
+        // this needs to be called after the dom is ready
+        // for manipulation
+        antycs.plugins.facebook.init({
+          appId: '552892074746884',
+          channelUrl: '//' + window.location.host + '/channel.html',
+          status: true,
+          xfbml: true
+        });
+        antycs
+          .watch('facebook', function(event) {
+            console.log('facebook', event);
+          })
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Example: Facebook</h1>
+    <div>
+      <p>Open the console and click the links to see what was watched. You'll have to actually follow-through with the actions to see the events get fired in the console.</p>
+      <div class="fb-like" data-href="http://freshcod.es/" data-width="450" data-show-faces="true" data-send="true"></div>
+    </div>
+  </body>
+</html>
+

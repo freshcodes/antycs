@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="antycs-category" content="Test">
+    <title>Example: Facebook (manual setup)</title>
+    <script src="../src/antycs.js"></script>
+    <script src="../src/dom/native.js"></script>
+    <script src="../src/plugins/facebook.js"></script>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId: '552892074746884',
+          channelUrl: '//' + window.location.host + '/channel.html',
+          status: true,
+          xfbml: true
+        });
+        antycs.plugins.facebook.setup();
+      };
+      window.onload = function() {
+        antycs
+          .watch('facebook', function(event) {
+            console.log('facebook', event);
+          })
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Example: Facebook (manual setup)</h1>
+    <div>
+      <p>Open the console and click the links to see what was watched. You'll have to actually follow-through with the actions to see the events get fired in the console.</p>
+      <div class="fb-like" data-href="http://freshcod.es" data-width="450" data-show-faces="true" data-send="true"></div>
+    </div>
+
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/all.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </body>
+</html>

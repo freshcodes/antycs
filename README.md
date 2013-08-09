@@ -89,7 +89,20 @@ To watch for these events simply prefix them with `twitter.` such as: `antycs.wa
 
 ### Facebook
 
-In the works...
+This uses the [Facebook JavaScript SDK](https://developers.facebook.com/docs/web/gettingstarted/). There are two examples in the examples directory related to the Facebook plugin on how to initialize it.
+
+The `target` argument to `antycs.watch` is not required. If you pass a `target` it should be the url associated with the button. For example you could target a like to a specific url.
+
+```js
+antycs.watch('facebook.like', 'http://target.uri/', function(event) { ... });
+```
+
+If you are using the HTML5 like/send buttons then you can watch for the following events:
+
+ * `like`
+ * `unlike`
+ * `send`
+
 
 ### YouTube
 
