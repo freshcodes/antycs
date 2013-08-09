@@ -102,7 +102,7 @@
     handle: function(event) {
       for (var i=0,watcher; (watcher=plugin.watchers[i++]);) {
         if (!plugin.matchesEventType(event, watcher.type)) { continue; }
-        if ((watcher.target && event.target && event.target.a) && watcher.target === event.target.a.id) {
+        if (plugin.matchesEventTarget(event, watcher.target)) {
           plugin.triggerWatcher(watcher, event);
         }
       }
@@ -110,6 +110,10 @@
 
     matchesEventType: function(event, type) {
       return event && (type === 'youtube' || type === 'youtube.' + event.type);
+    },
+
+    matchesEventTarget: function(event, target) {
+      return (target && event.target && event.target.a) && target === event.target.a.id;
     },
 
     triggerWatcher: function(watcher, event) {
