@@ -1,23 +1,208 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>antycs</title>
-    <style type="text/css">
-      body {
-        margin: 0;
-        padding: 7px;
-        text-align: center;
-        font-size: 14px;
-        font-family: Verdana, sans-serif;
-        color: #000;
-      }
-      h1 {
-        font-size: 24px;
-      }
-    </style>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>antycs by freshcodes</title>
   </head>
+
   <body>
-    <h1>antycs</h1>
-    <p>Organize and simplify your analytics event trapping related code.</p>
+    <header>
+      <div class="inner">
+        <h1>antycs</h1>
+        <h2>Organize and simplify your analytics event trapping related code.</h2>
+        <a href="https://github.com/freshcodes/antycs" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview</h1>
+
+<p>There are many third party components included in most web sites these days. Components such as embedded YouTube videos or Facebook Like buttons. Most of these services are isolated in an iFrame but do provide an API to interact with. Unfortunately all these APIs are quite different.</p>
+
+<p>The antycs library focuses on providing a simple and consistent API to watch how your users are interacting with these components. You can easily pair your preferred analytics tracking software with antycs.</p>
+
+<p>The primary method used is called <code>antycs.watch</code> and it allows you to watch for specific events with a specific target. The events you can watch for depends on which plugins you include. The default plugin provides DOM related event functionality such as <code>click</code> and <code>submit</code> events. Other events exposed by plugins are namespaced with the plugins name and then the type of event. For instance the Twitter plugin allows you to watch for <code>twitter.retweet</code> and other related Twitter events exposed by the Twitter Web Intents API. You can also watch for any Twitter events by only watching for <code>twitter</code>.</p>
+
+<h2>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<p>There are several examples in the examples directory that illustrate how to use <code>antycs</code>. Here is a glimpse of how it can be used:</p>
+
+<pre><code>antycs
+    .watch('click', '.track', function(event) {
+        // code to handle a click on anything
+        // with the class .track in the document
+    })
+    .watch('submit', '.track', function(event) {
+        // code to handle a submit event on anything
+        // with the class .track in the document
+    });
+</code></pre>
+
+<p>If you load one of the other plugins such as the Twitter plugin you can watch for other types of events as well.</p>
+
+<pre><code>antycs
+    .watch('twitter.follow', '.track', function(event) {
+        // code to handle a twitter follow event
+        // from a twitter follow button with the
+        // class of .track
+    });
+</code></pre>
+
+<p>You can find the data Twitter exposes with these events by reviewing <a href="https://dev.twitter.com/docs/tfw-javascript">their documentation</a>.</p>
+
+<h2>
+<a name="api" class="anchor" href="#api"><span class="octicon octicon-link"></span></a>API</h2>
+
+<h3>
+<a name="antycswatchevent-target-handler" class="anchor" href="#antycswatchevent-target-handler"><span class="octicon octicon-link"></span></a><code>antycs.watch(event, target, handler)</code>
+</h3>
+
+<p>The events that can be watched for depends on what plugins are loaded. The target is typically a CSS selector for most situations. Some third party APIs are not as flexible and require targeting against a different parameter such as a URI for the Facebook plugin. This method is chainable.</p>
+
+<h3>
+<a name="antycserrormessage" class="anchor" href="#antycserrormessage"><span class="octicon octicon-link"></span></a><code>antycs.error(message)</code>
+</h3>
+
+<p>Used when antycs cannot do something it expected to be able to do.</p>
+
+<h3>
+<a name="antycsdommatcheselement-selector" class="anchor" href="#antycsdommatcheselement-selector"><span class="octicon octicon-link"></span></a><code>antycs.dom.matches(element, selector)</code>
+</h3>
+
+<p>This is used to facilitate event delegation based on a selector. There are currently two implementations: a native and jQuery based implementation. It simply takes an element and a selector and returns true or false if the selector matches the element or not.</p>
+
+<h3>
+<a name="antycsdomontype-target-handler" class="anchor" href="#antycsdomontype-target-handler"><span class="octicon octicon-link"></span></a><code>antycs.dom.on(type, target, handler)</code>
+</h3>
+
+<p>This is used to facilitate event delegation based on a selector. There are currently two implementations; a native and jQuery based implementation. It simply takes an event type, a target which is a CSS selector, and a handler.</p>
+
+<h3>
+<a name="antycseventstoppropagationevent" class="anchor" href="#antycseventstoppropagationevent"><span class="octicon octicon-link"></span></a><code>antycs.event.stopPropagation(event)</code>
+</h3>
+
+<p>This is used to control event propagation for antycs based events. Sets a property on the event that says it should not propagate. This is called by default and can be overridden by calling <code>antycs.event.allowPropagation</code> in the event handler.</p>
+
+<h3>
+<a name="antycseventispropagationstoppedevent" class="anchor" href="#antycseventispropagationstoppedevent"><span class="octicon octicon-link"></span></a><code>antycs.event.isPropagationStopped(event)</code>
+</h3>
+
+<p>This is used to control event propagation for antycs based events. Returns true or false if the event is set to propagate or not.</p>
+
+<h3>
+<a name="antycseventallowpropagationevent" class="anchor" href="#antycseventallowpropagationevent"><span class="octicon octicon-link"></span></a><code>antycs.event.allowPropagation(event)</code>
+</h3>
+
+<p>This is used to control event propagation for antycs based events. Sets a property on the event that says it should propagate. This can be overridden by calling <code>antycs.event.stopPropagation</code> in the event handler.</p>
+
+<h2>
+<a name="plugins" class="anchor" href="#plugins"><span class="octicon octicon-link"></span></a>Plugins</h2>
+
+<h3>
+<a name="default" class="anchor" href="#default"><span class="octicon octicon-link"></span></a>Default</h3>
+
+<p>The <code>target</code> argument to <code>antycs.watch</code> is not required. If you do not pass a target then you'll get all the watched events that bubble up to the document. If you do pass a <code>target</code> then it should be in the form of a CSS selector.</p>
+
+<p>The default plugin allows for tracking of DOM related events. It adds a slight delay to some link clicks and form submits by default.</p>
+
+<h3>
+<a name="twitter" class="anchor" href="#twitter"><span class="octicon octicon-link"></span></a>Twitter</h3>
+
+<p>The <code>target</code> argument to <code>antycs.watch</code> is not required. If you do not pass a target then you'll get all the watched events from the entire site. If you do pass a <code>target</code> then it should be in the form of a CSS selector.</p>
+
+<p>If you are using some twitter buttons on your site then you can listen for some events that are exposed by Twitter. Here is a list of what this plugin supports listening to:</p>
+
+<ul>
+<li><code>click</code></li>
+<li><code>tweet</code></li>
+<li><code>retweet</code></li>
+<li><code>follow</code></li>
+<li><code>unfollow</code></li>
+<li><code>favorite</code></li>
+</ul><p>To watch for these events simply prefix them with <code>twitter.</code> such as: <code>antycs.watch('twitter.click', ...)</code>. You can also watch for all the events by only watching for <code>twitter</code> such as: <code>antycs.watch('twitter', ...)</code>.</p>
+
+<h3>
+<a name="facebook" class="anchor" href="#facebook"><span class="octicon octicon-link"></span></a>Facebook</h3>
+
+<p>This uses the <a href="https://developers.facebook.com/docs/web/gettingstarted/">Facebook JavaScript SDK</a>. There are two examples in the examples directory related to the Facebook plugin on how to initialize it.</p>
+
+<p>The <code>target</code> argument to <code>antycs.watch</code> is not required. If you pass a <code>target</code> it should be the url associated with the button. For example you could target a like to a specific url.</p>
+
+<div class="highlight"><pre><span class="nx">antycs</span><span class="p">.</span><span class="nx">watch</span><span class="p">(</span><span class="s1">'facebook.like'</span><span class="p">,</span> <span class="s1">'http://target.uri/'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">});</span>
+</pre></div>
+
+<p>If you are using the HTML5 like/send buttons then you can watch for the following events:</p>
+
+<ul>
+<li><code>like</code></li>
+<li><code>unlike</code></li>
+<li><code>send</code></li>
+</ul><h3>
+<a name="youtube" class="anchor" href="#youtube"><span class="octicon octicon-link"></span></a>YouTube</h3>
+
+<p>The <code>target</code> argument to <code>antycs.watch</code> is required and must be a string that is the id of the player you are wanting to watch. So if you had the following player:</p>
+
+<div class="highlight"><pre><span class="nt">&lt;iframe</span> <span class="na">id=</span><span class="s">"exampleplayer"</span> <span class="na">type=</span><span class="s">"text/html"</span> <span class="na">width=</span><span class="s">"640"</span> <span class="na">height=</span><span class="s">"360"</span> <span class="na">src=</span><span class="s">"http://www.youtube.com/embed/I6OXjnBIW-4?enablejsapi=1"</span><span class="err">...</span>
+</pre></div>
+
+<p>Then you could watch the events from this play by using the follow snippet.</p>
+
+<div class="highlight"><pre><span class="nx">antycs</span><span class="p">.</span><span class="nx">watch</span><span class="p">(</span><span class="s1">'youtube.play'</span><span class="p">,</span> <span class="s1">'exampleplayer'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">});</span>
+</pre></div>
+
+<p>If you are embedding videos via the iframe method from YouTube then you can listen for these events.</p>
+
+<ul>
+<li><code>play</code></li>
+<li><code>pause</code></li>
+<li><code>end</code></li>
+<li><code>buffer</code></li>
+<li><code>cue</code></li>
+<li><code>qualitychange</code></li>
+<li><code>ratechange</code></li>
+<li><code>error</code></li>
+</ul><p>To watch for these events simply prefix them with <code>youtube.</code> such as: <code>antycs.watch('youtube.play', ...)</code>. You can always watch for all the events by only watching for <code>youtube</code> such as: <code>antycs.watch('youtube', ...)</code>.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p><code>antycs</code> is licensed under the MIT (LICENSE.txt) license.</p>
+
+<p>Copyright (c) 2013 Fresh Codes LLC</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/freshcodes/antycs/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/freshcodes/antycs/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/freshcodes/antycs"></a> is maintained by <a href="https://github.com/freshcodes">freshcodes</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
   </body>
 </html>
